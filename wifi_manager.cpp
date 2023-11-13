@@ -5,12 +5,14 @@
 #include <ESPmDNS.h>
 #include <Update.h> 
 #include <WiFi.h>
-#include <FastLED.h>
+// #include <FastLED.h>
 #include "ELM327_Emulator.h"
 
-extern CRGB leds[A5_NUM_LEDS];
+// extern CRGB leds[A5_NUM_LEDS];
 
 static IPAddress broadcastAddr(255,255,255,255);
+
+#define ELM327PORT 35000
 
 WiFiManager::WiFiManager()
 {
@@ -27,11 +29,11 @@ void WiFiManager::setup()
 
         WiFiEventId_t eventID = WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) 
         {
-           if (SysSettings.fancyLED)
-           {
-               leds[SysSettings.LED_CONNECTION_STATUS] = CRGB::Red;
-               FastLED.show();
-           }
+//           if (SysSettings.fancyLED)
+//           {
+//               leds[SysSettings.LED_CONNECTION_STATUS] = CRGB::Red;
+//               FastLED.show();
+//           }
            Serial.print("WiFi lost connection. Reason: ");
            Serial.println(info.wifi_sta_disconnected.reason);
            SysSettings.isWifiConnected = false;
@@ -49,11 +51,13 @@ void WiFiManager::setup()
         WiFi.mode(WIFI_AP);
         WiFi.setSleep(true);
         WiFi.softAP((const char *)settings.SSID, (const char *)settings.WPA2Key);
-        if (SysSettings.fancyLED)
-        {
-            leds[SysSettings.LED_CONNECTION_STATUS] = CRGB::Green;
-            FastLED.show();
-        }
+        delay(500);
+        WiFi.softAPConfig( IPAddress(192, 168, 0, 10),  IPAddress(192, 168, 0, 10), IPAddress(255, 255, 255, 0));
+//        if (SysSettings.fancyLED)
+//        {
+//            leds[SysSettings.LED_CONNECTION_STATUS] = CRGB::Green;
+//            FastLED.show();
+//        }
     }
 }
 
@@ -76,11 +80,11 @@ void WiFiManager::loop()
                 Serial.print("RSSI: ");
                 Serial.println(WiFi.RSSI());
                 needServerInit = true;
-                if (SysSettings.fancyLED)
-                {
-                    leds[SysSettings.LED_CONNECTION_STATUS] = CRGB::Green;
-                    FastLED.show();
-                }
+//                if (SysSettings.fancyLED)
+//                {
+//                    leds[SysSettings.LED_CONNECTION_STATUS] = CRGB::Green;
+//                    FastLED.show();
+//                }
             }
             if (settings.wifiMode == 2)
             {
@@ -96,11 +100,15 @@ void WiFiManager::loop()
                 //MDNS.begin wants the name we will register as without the .local on the end. That's added automatically.
                 if (!MDNS.begin(deviceName)) Serial.println("Error setting up MDNS responder!");
                 MDNS.addService("telnet", "tcp", 23);// Add service to MDNS-SD
-                MDNS.addService("ELM327", "tcp", 1000);// Add service to MDNS-SD
+//                MDNS.addService("ELM327", "tcp", 1000);// Add service to MDNS-SD
+                MDNS.addService("ELM327", "tcp", ELM327PORT);// Add service to MDNS-SD
                 wifiServer.begin(23); //setup as a telnet server
                 wifiServer.setNoDelay(true);
+                Serial.print("Port number: ");
+                Serial.println(ELM327PORT);
                 Serial.println("TCP server started");
-                wifiOBDII.begin(1000); //setup for wifi linked ELM327 emulation
+//                wifiOBDII.begin(1000); //setup for wifi linked ELM327 emulation
+                wifiOBDII.begin(ELM327PORT); //setup for wifi linked ELM327 emulation
                 wifiOBDII.setNoDelay(true);
                 ArduinoOTA.setPort(3232);
                 ArduinoOTA.setHostname(deviceName);
@@ -110,11 +118,11 @@ void WiFiManager::loop()
                 ArduinoOTA
                    .onStart([]() {
                       String type;
-                      if (SysSettings.fancyLED)
-                      {
-                          leds[SysSettings.LED_CONNECTION_STATUS] = CRGB::Purple;
-                          FastLED.show();
-                      }
+//                      if (SysSettings.fancyLED)
+//                      {
+//                          leds[SysSettings.LED_CONNECTION_STATUS] = CRGB::Purple;
+//                          FastLED.show();
+//                      }
                       if (ArduinoOTA.getCommand() == U_FLASH)
                          type = "sketch";
                       else // U_SPIFFS
@@ -159,11 +167,11 @@ void WiFiManager::loop()
                                 Serial.print("New client: ");
                                 Serial.print(i); Serial.print(' ');
                                 Serial.println(SysSettings.clientNodes[i].remoteIP());
-                                if (SysSettings.fancyLED)
-                                {
-                                    leds[SysSettings.LED_CONNECTION_STATUS] = CRGB::Blue;
-                                    FastLED.show();
-                                }
+//                                if (SysSettings.fancyLED)
+//                                {
+//                                    leds[SysSettings.LED_CONNECTION_STATUS] = CRGB::Blue;
+//                                    FastLED.show();
+//                                }
                             }
                         }
                     }
@@ -219,11 +227,11 @@ void WiFiManager::loop()
                         if (SysSettings.clientNodes[i]) 
                         {
                             SysSettings.clientNodes[i].stop();
-                            if (SysSettings.fancyLED)
-                            {
-                                leds[SysSettings.LED_CONNECTION_STATUS] = CRGB::Green;
-                                FastLED.show();
-                            }
+//                            if (SysSettings.fancyLED)
+//                            {
+//                                leds[SysSettings.LED_CONNECTION_STATUS] = CRGB::Green;
+//                                FastLED.show();
+//                            }
                         }
                     }
 
@@ -259,11 +267,11 @@ void WiFiManager::loop()
                     Serial.println("WiFi disconnected. Bummer!");
                     SysSettings.isWifiConnected = false;
                     SysSettings.isWifiActive = false;
-                    if (SysSettings.fancyLED)
-                    {  
-                        leds[SysSettings.LED_CONNECTION_STATUS] = CRGB::Red;
-                        FastLED.show();
-                    }
+//                    if (SysSettings.fancyLED)
+//                    {  
+//                        leds[SysSettings.LED_CONNECTION_STATUS] = CRGB::Red;
+//                        FastLED.show();
+//                    }
                 }
             }
         }

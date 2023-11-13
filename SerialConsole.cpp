@@ -69,7 +69,7 @@ void SerialConsole::printMenu()
     Serial.println("Config Commands (enter command=newvalue). Current values shown in parenthesis:");
     Serial.println();
 
-    Logger::console("SYSTYPE=%i - Set board type (0=Macchina A0, 1=EVTV ESP32 Board 2=Macchina A5)", settings.systemType);
+//    Logger::console("SYSTYPE=%i - Set board type (0=Macchina A0, 1=EVTV ESP32 Board, 2=Macchina A5, 3=RejsaCAN ESP32, 4=RejsaCAN ESP32-S3)", settings.systemType);
     Logger::console("LOGLEVEL=%i - set log level (0=debug, 1=info, 2=warn, 3=error, 4=off)", settings.logLevel);
     Serial.println();
 
@@ -94,9 +94,9 @@ void SerialConsole::printMenu()
     Logger::console("BINSERIAL=%i - Enable/Disable Binary Sending of CANBus Frames to Serial (0=Dis, 1=En)", settings.useBinarySerialComm);
     Serial.println();
 
-    Logger::console("BTMODE=%i - Set mode for Bluetooth (0 = Off, 1 = On)", settings.enableBT);
-    Logger::console("BTNAME=%s - Set advertised Bluetooth name", settings.btName);
-    Serial.println();
+//    Logger::console("BTMODE=%i - Set mode for Bluetooth (0 = Off, 1 = On)", settings.enableBT);
+//    Logger::console("BTNAME=%s - Set advertised Bluetooth name", settings.btName);
+//    Serial.println();
 
     Logger::console("LAWICEL=%i - Set whether to accept LAWICEL commands (0 = Off, 1 = On)", settings.enableLawicel);
     Serial.println();
@@ -333,13 +333,17 @@ void SerialConsole::handleConfigCmd()
         Logger::console("Setting Serial Binary Comm to %i", newValue);
         settings.useBinarySerialComm = newValue;
         writeEEPROM = true;
-    } else if (cmdString == String("BTMODE")) {
+    } 
+/*    
+      else if (cmdString == String("BTMODE")) {
         if (newValue < 0) newValue = 0;
         if (newValue > 1) newValue = 1;
         Logger::console("Setting Bluetooth Mode to %i", newValue);
         settings.enableBT = newValue;
         writeEEPROM = true;
-    } else if (cmdString == String("LAWICEL")) {
+    } 
+*/    
+    else if (cmdString == String("LAWICEL")) {
         if (newValue < 0) newValue = 0;
         if (newValue > 1) newValue = 1;
         Logger::console("Setting LAWICEL Mode to %i", newValue);
@@ -353,11 +357,15 @@ void SerialConsole::handleConfigCmd()
         if (newValue == 2) Logger::console("Setting Wifi Mode to Create AP");
         settings.wifiMode = newValue;
         writeEEPROM = true;
-    } else if (cmdString == String("BTNAME")) {
+    } 
+/*    
+      else if (cmdString == String("BTNAME")) {
         Logger::console("Setting Bluetooth Name to %s", newString);
         strcpy((char *)settings.btName, newString);
         writeEEPROM = true;
-    } else if (cmdString == String("SSID")) {
+    } 
+*/
+      else if (cmdString == String("SSID")) {
         Logger::console("Setting SSID to %s", newString);
         strcpy((char *)settings.SSID, newString);
         writeEEPROM = true;
@@ -367,10 +375,12 @@ void SerialConsole::handleConfigCmd()
         writeEEPROM = true;
     } else if (cmdString == String("SYSTYPE")) {
         if (newValue < 0) newValue = 0;
-        if (newValue > 2) newValue = 2;
+        if (newValue > 4) newValue = 4;
         if (newValue == 0) Logger::console("Setting board type to Macchina A0");
         if (newValue == 1) Logger::console("Setting board type to EVTV ESP32");
         if (newValue == 2) Logger::console("Setting board type to Macchina 5CAN");
+        if (newValue == 3) Logger::console("Setting board type to RejsaCAN ESP32");
+        if (newValue == 4) Logger::console("Setting board type to RejsaCAN ESP32-S3");
         settings.systemType = newValue;
         writeEEPROM = true;
     } else if (cmdString == String("LOGLEVEL")) {

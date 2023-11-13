@@ -29,7 +29,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <esp32_can.h>
 #include <SPI.h>
 #include <Preferences.h>
-#include <FastLED.h>
+//#include <FastLED.h>
 #include "ELM327_Emulator.h"
 #include "SerialConsole.h"
 #include "wifi_manager.h"
@@ -64,7 +64,7 @@ LAWICELHandler lawicel;
 
 SerialConsole console;
 
-CRGB leds[A5_NUM_LEDS]; //A5 has the largest # of LEDs so use that one even for A0 or EVTV
+// CRGB leds[A5_NUM_LEDS]; //A5 has the largest # of LEDs so use that one even for A0 or EVTV
 
 CAN_COMMON *canBuses[NUM_BUSES];
 
@@ -85,8 +85,9 @@ void loadSettings()
     settings.wifiMode = nvPrefs.getUChar("wifiMode", 2); //Wifi defaults to creating an AP
     settings.enableBT = nvPrefs.getBool("enable-bt", false);
     settings.enableLawicel = nvPrefs.getBool("enableLawicel", true);
-    settings.systemType = nvPrefs.getUChar("systype", (espChipRevision > 2) ? 0 : 1); //0 = A0, 1 = EVTV ESP32
-
+//    settings.systemType = nvPrefs.getUChar("systype", (espChipRevision > 2) ? 0 : 1); //0 = A0, 1 = EVTV ESP32
+    settings.systemType = nvPrefs.getUChar("systype", 0); //0 = A0, 1 = EVTV ESP32
+/*
     if (settings.systemType == 0)
     {
         Logger::console("Running on Macchina A0");
@@ -112,10 +113,10 @@ void loadSettings()
         pinMode(13, OUTPUT);
         digitalWrite(13, LOW);
         delay(100);
-        FastLED.addLeds<LED_TYPE, A0_LED_PIN, COLOR_ORDER>(leds, A0_NUM_LEDS).setCorrection( TypicalLEDStrip );
-        FastLED.setBrightness(  BRIGHTNESS );
-        leds[0] = CRGB::Red;
-        FastLED.show();
+//        FastLED.addLeds<LED_TYPE, A0_LED_PIN, COLOR_ORDER>(leds, A0_NUM_LEDS).setCorrection( TypicalLEDStrip );
+//        FastLED.setBrightness(  BRIGHTNESS );
+//        leds[0] = CRGB::Red;
+//        FastLED.show();
         pinMode(21, OUTPUT);
         digitalWrite(21, LOW);
         CAN0.setCANPins(GPIO_NUM_4, GPIO_NUM_5);
@@ -176,15 +177,15 @@ void loadSettings()
         SysSettings.isWifiConnected = false;
 
 
-        FastLED.addLeds<LED_TYPE, A5_LED_PIN, COLOR_ORDER>(leds, A5_NUM_LEDS).setCorrection( TypicalLEDStrip );
-        FastLED.setBrightness(  BRIGHTNESS );
+//        FastLED.addLeds<LED_TYPE, A5_LED_PIN, COLOR_ORDER>(leds, A5_NUM_LEDS).setCorrection( TypicalLEDStrip );
+//        FastLED.setBrightness(  BRIGHTNESS );
         //With the board facing up and looking at the USB end the LEDs are 0 1 2 (USB) 3
         //can test LEDs here for debugging but normally leave first three off and set connection to RED.
         //leds[0] = CRGB::White;
         //leds[1] = CRGB::Blue;
         //leds[2] = CRGB::Green;
-        leds[3] = CRGB::Red;
-        FastLED.show();
+//        leds[3] = CRGB::Red;
+//        FastLED.show();
 
         strcpy(deviceName, MACC_NAME);
         strcpy(otaHost, "macchina.cc");
@@ -199,6 +200,58 @@ void loadSettings()
         digitalWrite(SW_MODE1, HIGH);
     }
 
+    if (settings.systemType == 3)
+    {
+        Logger::console("Running on RejsaCAN ESP32");
+        canBuses[0] = &CAN0;
+        SysSettings.LED_CANTX = 255;
+        SysSettings.LED_CANRX = 12;
+        SysSettings.LED_LOGGING = 255;
+        SysSettings.LED_CONNECTION_STATUS = 13;
+        SysSettings.fancyLED = false;
+        SysSettings.logToggle = false;
+        SysSettings.txToggle = true;
+        SysSettings.rxToggle = true;
+        SysSettings.lawicelAutoPoll = false;
+        SysSettings.lawicelMode = false;
+        SysSettings.lawicellExtendedMode = false;
+        SysSettings.lawicelTimestamping = false;
+        SysSettings.numBuses = 1; //Currently we support CAN0
+        SysSettings.isWifiActive = false;
+        SysSettings.isWifiConnected = false;
+        strcpy(deviceName, REJSANAME);
+        strcpy(otaHost, "rejsa.nu");
+        strcpy(otaFilename, "/rejsacan/esp32ret.bin");
+        CAN0.setCANPins(GPIO_NUM_16, GPIO_NUM_17);
+    }
+*/
+    if (settings.systemType == 0)
+    {
+        Logger::console("Running on RejsaCAN ESP32-S3");
+        canBuses[0] = &CAN0;
+        SysSettings.LED_CANTX = 10;
+        SysSettings.LED_CANRX = 11;
+        SysSettings.LED_LOGGING = 255;
+        SysSettings.LED_CONNECTION_STATUS = 255;
+        SysSettings.fancyLED = false;
+        SysSettings.logToggle = false;
+        SysSettings.txToggle = true;
+        SysSettings.rxToggle = true;
+        SysSettings.lawicelAutoPoll = false;
+        SysSettings.lawicelMode = false;
+        SysSettings.lawicellExtendedMode = false;
+        SysSettings.lawicelTimestamping = false;
+        SysSettings.numBuses = 1; //Currently we support CAN0
+        SysSettings.isWifiActive = true;
+        SysSettings.isWifiConnected = false;
+        strcpy(deviceName, REJSANAME);
+        strcpy(otaHost, "rejsa.nu");
+        strcpy(otaFilename, "/rejsacan/esp32-s3ret.bin");
+        CAN0.setCANPins(GPIO_NUM_13, GPIO_NUM_14);
+        pinMode(SysSettings.LED_CANTX, OUTPUT);
+        pinMode(SysSettings.LED_CANRX, OUTPUT);
+    }
+
     if (nvPrefs.getString("SSID", settings.SSID, 32) == 0)
     {
         strcpy(settings.SSID, deviceName);
@@ -209,6 +262,7 @@ void loadSettings()
     {
         strcpy(settings.WPA2Key, "aBigSecret");
     }
+
     if (nvPrefs.getString("btname", settings.btName, 32) == 0)
     {
         strcpy(settings.btName, "ELM327-");
@@ -243,8 +297,8 @@ void setup()
 
     espChipRevision = ESP.getChipRevision();
 
-    Serial.begin(1000000); //for production
-    //Serial.begin(115200); //for testing
+    //Serial.begin(1000000); //for production
+    Serial.begin(115200); //for testing
 
     SysSettings.isWifiConnected = false;
 
@@ -254,9 +308,11 @@ void setup()
     //try to debug that. But, no dice yet. :(
     //heap_caps_print_heap_info(MALLOC_CAP_8BIT);
 
+/*     
     if (settings.enableBT) 
     {
-        Serial.println("Starting bluetooth");
+       
+      Serial.println("Starting bluetooth");
         elmEmulator.setup();
         if (SysSettings.fancyLED && (settings.wifiMode == 0) )
         {
@@ -264,6 +320,7 @@ void setup()
             FastLED.show();
         }
     }
+*/
     /*else*/ wifiManager.setup();
 
     //heap_caps_print_heap_info(MALLOC_CAP_8BIT);
@@ -280,7 +337,7 @@ void setup()
     SysSettings.lawicelTimestamping = false;
     SysSettings.lawicelPollCounter = 0;
     
-    //elmEmulator.setup();
+    elmEmulator.setup();
 
     Serial.print("Free heap after setup: ");
     Serial.println(esp_get_free_heap_size());

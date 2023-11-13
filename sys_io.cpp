@@ -31,9 +31,9 @@ by stimmer
 */
 
 #include "sys_io.h"
-#include <FastLED.h>
+//#include <FastLED.h>
 
-extern CRGB leds[A5_NUM_LEDS];
+//extern CRGB leds[A5_NUM_LEDS];
 
 bool useRawADC = false;
 
@@ -140,10 +140,10 @@ void toggleRXLED()
         counter = 0;
         SysSettings.rxToggle = !SysSettings.rxToggle;
         if (!SysSettings.fancyLED) setLED(SysSettings.LED_CANRX, SysSettings.rxToggle);
-        else
-        {
-          leds[SysSettings.LED_CANRX] = SysSettings.rxToggle?CRGB::Blue:CRGB::Black;
-        };
+//        else
+//        {
+//          leds[SysSettings.LED_CANRX] = SysSettings.rxToggle?CRGB::Blue:CRGB::Black;
+//        };
     }
 }
 
@@ -155,9 +155,9 @@ void toggleTXLED()
         counter = 0;
         SysSettings.txToggle = !SysSettings.txToggle;
         if (!SysSettings.fancyLED) setLED(SysSettings.LED_CANTX, SysSettings.txToggle);
-        else
-        {
-          leds[SysSettings.LED_CANRX] = SysSettings.rxToggle?CRGB::Green:CRGB::Black;
-        };
+//        else
+//        {
+//          leds[SysSettings.LED_CANRX] = SysSettings.rxToggle?CRGB::Green:CRGB::Black;
+//        };
     }
 }

@@ -51,7 +51,7 @@ AT RV (adapter voltage) - Send something like 14.4V
 #define ELM327_H_
 
 #include <Arduino.h>
-#include "BluetoothSerial.h"
+//#include "BluetoothSerial.h"
 #include <WiFi.h>
 #include "commbuffer.h"
 
@@ -70,7 +70,7 @@ public:
     bool getMonitorMode();
 
 private:
-    BluetoothSerial serialBT;
+//	  BluetoothSerial serialBT;
     WiFiClient *mClient;
     CommBuffer txBuffer;
     char incomingBuffer[128]; //storage for one incoming line

@@ -53,6 +53,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define PREF_NAME   "ESP32RET"
 #define EVTV_NAME   "ESP32RET"
 #define MACC_NAME   "A0RET"
+#define REJSANAME   "ESP32S3RET"
 
 #define MARK_LIMIT  6   //# of our analog input pins to use for marking. Defaults to all of them. Send voltage to pin to trigger it
 

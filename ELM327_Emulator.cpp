@@ -31,7 +31,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #include "ELM327_Emulator.h"
-#include "BluetoothSerial.h"
+//#include "BluetoothSerial.h"
 #include "config.h"
 #include "Logger.h"
 #include "utility.h"
@@ -58,7 +58,7 @@ ELM327Emu::ELM327Emu()
  * Initialization of hardware and parameters
  */
 void ELM327Emu::setup() {
-    serialBT.begin(settings.btName);
+//    serialBT.begin(settings.btName);
 }
 
 void ELM327Emu::setWiFiClient(WiFiClient *client)
@@ -93,8 +93,10 @@ void ELM327Emu::sendCmd(String cmd) {
 
 void ELM327Emu::loop() {
     int incoming;
+
     if (!mClient) //bluetooth
     {
+/*		
         while (serialBT.available()) {
             incoming = serialBT.read();
             if (incoming != -1) { //and there is no reason it should be -1
@@ -119,6 +121,7 @@ void ELM327Emu::loop() {
             } 
             else return;
         }
+*/
     }
     else //wifi
     {
@@ -155,10 +158,12 @@ void ELM327Emu::sendTxBuffer()
             mClient->write(buff, wifiLength);
         }
     }
+/*
     else //bluetooth then
     {
         serialBT.write(txBuffer.getBufferedBytes(), txBuffer.numAvailableBytes());
     }
+*/
     txBuffer.clearBufferedBytes();
 }
 
