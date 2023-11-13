@@ -2,7 +2,7 @@
   
 A fork of ESP32RET by collin80 to add support for the ESP32-S3. It's a quick hack where serial Bluetooth is removed since the S3 only has BLE and no support for Classic Bluetooth. FastLED support is also commented out due to problems compiling with it included. Works straight off with RejsaCAN.
 
-**Info further down on this page is for the original code so not all correect for this fork**
+**Info further down on this page is for the original code so not all correct for this fork**
 
 ------------------------------
   
