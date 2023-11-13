@@ -1,8 +1,15 @@
-ESP32RET
+ESP32S3RET
 =======
 
-Reverse Engineering Tool running on ESP32 based hardware. Supports both EVTV ESP32 and Macchina A0
+A fork of ESP32RET by collin80 to add support for the ESP32-S3. 
 
+A yet to be fixed and working quick hack where serial Bluetooth is removed since the S3 only has BLE and no support for Classic Bluetooth. FastLED support is also commented out due to problems compiling with it included.
+
+=======
+
+Reverse Engineering Tool running on ESP32-S3 based hardware.
+
+=======
 
 #### Requirements:
 
