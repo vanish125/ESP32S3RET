@@ -12,8 +12,6 @@ ESP32RET
 
 Reverse Engineering Tool running on ESP32-S3 based hardware.
 
-=======
-
 #### Requirements:
 
 You will need the following to be able to compile the run this project:
