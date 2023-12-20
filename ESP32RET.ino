@@ -64,7 +64,7 @@ LAWICELHandler lawicel;
 
 SerialConsole console;
 
-// CRGB leds[A5_NUM_LEDS]; //A5 has the largest # of LEDs so use that one even for A0 or EVTV
+//CRGB leds[A0_NUM_LEDS]; //A5 has the largest # of LEDs so use that one even for A0 or EVTV
 
 CAN_COMMON *canBuses[NUM_BUSES];
 
@@ -229,8 +229,9 @@ void loadSettings()
     {
         Logger::console("Running on RejsaCAN ESP32-S3");
         canBuses[0] = &CAN0;
-        SysSettings.LED_CANTX = 10;
-        SysSettings.LED_CANRX = 11;
+        canBuses[1] = &CAN1;
+        SysSettings.LED_CANTX = 255;
+        SysSettings.LED_CANRX = 255;
         SysSettings.LED_LOGGING = 255;
         SysSettings.LED_CONNECTION_STATUS = 255;
         SysSettings.fancyLED = false;
@@ -241,15 +242,21 @@ void loadSettings()
         SysSettings.lawicelMode = false;
         SysSettings.lawicellExtendedMode = false;
         SysSettings.lawicelTimestamping = false;
-        SysSettings.numBuses = 1; //Currently we support CAN0
+        SysSettings.numBuses = 2; //Currently we support CAN0
         SysSettings.isWifiActive = true;
         SysSettings.isWifiConnected = false;
         strcpy(deviceName, REJSANAME);
         strcpy(otaHost, "rejsa.nu");
         strcpy(otaFilename, "/rejsacan/esp32-s3ret.bin");
-        CAN0.setCANPins(GPIO_NUM_13, GPIO_NUM_14);
-        pinMode(SysSettings.LED_CANTX, OUTPUT);
-        pinMode(SysSettings.LED_CANRX, OUTPUT);
+//        FastLED.addLeds<LED_TYPE, A0_LED_PIN, COLOR_ORDER>(leds, A0_NUM_LEDS).setCorrection( TypicalLEDStrip );
+//        FastLED.setBrightness(  BRIGHTNESS );
+//        leds[0] = CRGB::Red;
+//        FastLED.show();
+        CAN0.setCANPins(GPIO_NUM_47, GPIO_NUM_14);
+        CAN1.setINTPin(9);
+        CAN1.setCSPin(10);
+//        pinMode(SysSettings.LED_CANTX, OUTPUT);
+//        pinMode(SysSettings.LED_CANRX, OUTPUT);
     }
 
     if (nvPrefs.getString("SSID", settings.SSID, 32) == 0)
@@ -260,7 +267,7 @@ void loadSettings()
 
     if (nvPrefs.getString("wpa2Key", settings.WPA2Key, 64) == 0)
     {
-        strcpy(settings.WPA2Key, "aBigSecret");
+        strcpy(settings.WPA2Key, "12345678");
     }
 
     if (nvPrefs.getString("btname", settings.btName, 32) == 0)
@@ -297,8 +304,8 @@ void setup()
 
     espChipRevision = ESP.getChipRevision();
 
-    //Serial.begin(1000000); //for production
-    Serial.begin(115200); //for testing
+    Serial.begin(1000000); //for production
+//    Serial.begin(115200); //for testing
 
     SysSettings.isWifiConnected = false;
 

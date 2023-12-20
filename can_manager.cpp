@@ -61,16 +61,16 @@ void CANManager::setup()
     {
         uint8_t stdbymode;
         //need to set all MCP2517FD modules to use GPIO0 as XSTBY to control transceivers
-        for (int i = 1; i < 5; i++)
-        {
-            MCP2517FD *can = (MCP2517FD *)canBuses[i];
-            stdbymode = can->Read8(0xE04);
-            stdbymode |= 0x40; // Set bit 6 to enable XSTBY mode
-            can->Write8(0xE04, stdbymode);
-            stdbymode = can->Read8(0xE04);
-            stdbymode &= 0xFE; // clear low bit so GPIO0 is output
-            can->Write8(0xE04, stdbymode);
-        }
+//        for (int i = 1; i < 5; i++)
+//        {
+//            MCP2517FD *can = (MCP2517FD *)canBuses[i];
+//            stdbymode = can->Read8(0xE04);
+//            stdbymode |= 0x40; // Set bit 6 to enable XSTBY mode
+//            can->Write8(0xE04, stdbymode);
+//            stdbymode = can->Read8(0xE04);
+//            stdbymode &= 0xFE; // clear low bit so GPIO0 is output
+//            can->Write8(0xE04, stdbymode);
+//        }
     }
 
     for (int j = 0; j < NUM_BUSES; j++)
