@@ -253,7 +253,7 @@ void loadSettings()
 //        leds[0] = CRGB::Red;
 //        FastLED.show();
         CAN0.setCANPins(GPIO_NUM_47, GPIO_NUM_14);
-        CAN1.setINTPin(9);
+//        CAN1.setINTPin(9);
         CAN1.setCSPin(10);
 //        pinMode(SysSettings.LED_CANTX, OUTPUT);
 //        pinMode(SysSettings.LED_CANRX, OUTPUT);
